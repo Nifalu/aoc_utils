@@ -1,9 +1,9 @@
 pub trait RetrieveSubstring {
-    fn find_positions(&self, strings: Vec<&str>) -> Vec<Vec<(i32, String)>>;
+    fn find_positions(&self, strings: &[&str]) -> Vec<Vec<(i32, String)>>;
 }
 
 impl RetrieveSubstring for &str {
-    fn find_positions(&self, strings: Vec<&str>) -> Vec<Vec<(i32, String)>> {
+    fn find_positions(&self, strings: &[&str]) -> Vec<Vec<(i32, String)>> {
         let mut positions = Vec::new();
     
         for s in strings.iter() {
