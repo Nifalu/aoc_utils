@@ -2,6 +2,13 @@
 name = "aoc_utils"
 version = "0.1.0"
 edition = "2021"
+description = "A small collection of utilities for the advent of code challenges"
+documentation = "https://github.com/Nifalu/aoc_utils"
+readme = "README.md"
+homepage = "https://github.com/Nifalu/aoc_utils"
+repository = "https://github.com/Nifalu/aoc_utils"
+license = "MIT OR Apache-2.0"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
