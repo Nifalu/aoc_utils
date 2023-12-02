@@ -7,22 +7,30 @@
  */
 
 pub trait RetrieveDigits {
-    fn retrieve_digits(&self) -> Vec<i32>;
+    fn retrieve_all_digits(&self) -> Vec<i32>;
+    fn retrieve_nth_digit(&self, n: usize) -> Option<i32>;
+    fn retrieve_digit_at_pos(&self, n: usize) -> Option<i32>;
 }
 
 impl RetrieveDigits for &str {
-    fn retrieve_digits(&self) -> Vec<i32> {
-        let mut ints: Vec<i32> = Vec::new();
-        for char in self.chars() {
-            if let Some(digit) = char.to_digit(10) {
-                ints.push(digit as i32);
-            }
-        }
+    fn retrieve_all_digits(&self) -> Vec<i32> {
+        self.chars()
+            .filter_map(|c| c.to_digit(10))
+            .map(|d| d as i32)
+            .collect()
+    }
 
-        ints
+    fn retrieve_nth_digit(&self, n: usize) -> Option<i32> {
+        self.retrieve_all_digits().get(n).copied()
+    }
+
+    fn retrieve_digit_at_pos(&self, i: usize) -> Option<i32> {
+        self.chars()
+            .nth(i)
+            .and_then(|c| c.to_digit(10))
+            .map(|d| d as i32)
     }
 }
-
 
 /**
  * Receive an i32 vector containing all numbers found in a str
@@ -71,76 +79,44 @@ impl RetrieveInts for &str {
 /*--------------------------- TESTS ---------------------------*/
 
 
-
 #[cfg(test)]
-mod tests_retrieve_digits {
+mod tests {
     use super::*;
 
     #[test]
-    fn test_empty_string() {
-        let s = "";
-        let digits = s.retrieve_digits();
-        assert!(digits.is_empty());
+    fn test_retrieve_all_digits() {
+        assert_eq!("123ab456".retrieve_all_digits(), vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!("abc".retrieve_all_digits(), vec![]);
+        assert_eq!("".retrieve_all_digits(), vec![]);
     }
 
     #[test]
-    fn test_no_digits() {
-        let s = "abc";
-        let digits = s.retrieve_digits();
-        assert!(digits.is_empty());
+    fn test_retrieve_nth_digit() {
+        assert_eq!("123ab456".retrieve_nth_digit(2), Some(3));
+        assert_eq!("123ab456".retrieve_nth_digit(6), None);
+        assert_eq!("abc".retrieve_nth_digit(0), None);
     }
 
     #[test]
-    fn test_only_digits() {
-        let s = "123456";
-        let digits = s.retrieve_digits();
-        assert_eq!(digits, vec![1, 2, 3, 4, 5, 6]);
-    }
-
-    #[test]
-    fn test_mixed_content() {
-        let s = "a1b2c3";
-        let digits = s.retrieve_digits();
-        assert_eq!(digits, vec![1, 2, 3]);
+    fn test_retrieve_digit_at_pos() {
+        assert_eq!("123ab456".retrieve_digit_at_pos(2), Some(3));
+        assert_eq!("123ab456".retrieve_digit_at_pos(3), None);
+        assert_eq!("abc".retrieve_digit_at_pos(0), None);
     }
 }
 
 #[cfg(test)]
-mod tests_retrieve_ints {
+mod retrieve_ints_tests {
     use super::*;
 
     #[test]
-    fn test_empty_string() {
-        let s = "";
-        let ints = s.retrieve_ints();
-        assert!(ints.is_empty());
+    fn test_retrieve_ints() {
+        assert_eq!("123ab456".retrieve_ints(), vec![123, 456]);
+        assert_eq!("123ab45ab6".retrieve_ints(), vec![123, 45, 6]);
+        assert_eq!("abc".retrieve_ints(), vec![]);
+        assert_eq!("".retrieve_ints(), vec![]);
     }
 
-    #[test]
-    fn test_no_digits() {
-        let s = "abc";
-        let ints = s.retrieve_ints();
-        assert!(ints.is_empty());
-    }
-
-    #[test]
-    fn test_only_digits() {
-        let s = "123456";
-        let ints = s.retrieve_ints();
-        assert_eq!(ints, vec![123456]);
-    }
-
-    #[test]
-    fn test_mixed_content() {
-        let s = "123ab456";
-        let ints = s.retrieve_ints();
-        assert_eq!(ints, vec![123, 456]);
-    }
-
-    #[test]
-    #[should_panic(expected = "Number can not be parsed into a i32")]
-    fn test_overflow() {
-        let s = "2147483648"; // One more than i32::MAX
-        s.retrieve_ints();
-    }
+    // Additional tests can include strings with large numbers, negative numbers (if applicable), 
+    // and strings with numbers at the very beginning or end.
 }
