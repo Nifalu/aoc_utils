@@ -76,9 +76,9 @@ impl RetrieveInts for &str {
         let mut ints = Vec::new();
         let mut current_num = String::new();
 
-        for char in self.chars() {
-            if char.is_digit(10) {
-                current_num.push(char);
+        for c in self.chars() {
+            if c.is_digit(10) {
+                current_num.push(c);
             } else if !current_num.is_empty() {
                 if let Ok(num) = current_num.parse::<i32>() {
                     ints.push(num);
@@ -119,9 +119,9 @@ impl RetrieveInts for &str {
         let mut curr_num = String::new();
 
         // Add everthing until the end of the number
-        for char in self[start..].chars() {
-            if char.is_digit(10) {
-                curr_num.push(char);
+        for c in self[start..].chars() {
+            if c.is_digit(10) {
+                curr_num.push(c);
             } else {
                 break;
             }
@@ -150,6 +150,84 @@ impl RetrieveInts for &str {
     }
 }
 
+impl RetrieveInts for Vec<char> {
+    fn retrieve_all_ints(&self) -> Vec<i32> {
+        let mut ints = Vec::new();
+        let mut current_num = String::new();
+
+        for c in self {
+            if c.is_digit(10) {
+                current_num.push(*c);
+            } else if !current_num.is_empty() {
+                if let Ok(num) = current_num.parse::<i32>() {
+                    ints.push(num);
+                } else {
+                    panic!("Number can not be parsed into a i32");
+                }
+                current_num.clear();
+            }
+        }
+
+        // Check for any remaining number at the end of the string
+        if !current_num.is_empty() {
+            if let Ok(num) = current_num.parse::<i32>() {
+                ints.push(num);
+            } else {
+                panic!("Number can not be parsed into a i32");
+            }
+        }
+
+        ints
+    }
+
+    fn retrieve_nth_int(&self, n: usize) -> Option<i32> {
+        self.retrieve_all_ints().get(n).copied()
+    }
+
+    fn retrieve_int_at_pos(&self, n: usize) -> Option<i32> {
+        if n >= self.len() {
+            return None
+        }
+
+        // Find the start of the number
+        let mut start = n;
+        while start > 0 && self.get(start-1).map_or(false, |&c| c.is_digit(10)) {
+            start -= 1;
+        }
+
+        let mut curr_num = String::new();
+
+        // Add everthing until the end of the number
+        for &c in &self[start..] {
+            if c.is_digit(10) {
+                curr_num.push(c);
+            } else {
+                break;
+            }
+        }
+        if curr_num.is_empty() {
+            None
+        } else {
+            curr_num.parse::<i32>().ok()
+        }
+    }
+
+    fn retrieve_max_int(&self) -> Option<i32> {
+        self.retrieve_all_ints().iter().max().copied()
+    }
+
+    fn retrieve_min_int(&self) -> Option<i32> {
+        self.retrieve_all_ints().iter().min().copied()
+    }
+
+    fn retrieve_first_int(&self) -> Option<i32> {
+        self.retrieve_all_ints().iter().next().copied()
+    }
+
+    fn retrieve_last_int(&self) -> Option<i32> {
+        self.retrieve_all_ints().iter().last().copied()
+    }
+}
 
 
 
