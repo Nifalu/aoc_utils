@@ -109,9 +109,17 @@ impl RetrieveInts for &str {
         if n >= self.len() {
             return None
         }
+
+        // Find the start of the number
+        let mut start = n;
+        while start > 0 && self.chars().nth(start - 1).unwrap_or('a').is_digit(10) {
+            start -= 1;
+        }
+
         let mut curr_num = String::new();
 
-        for char in self[n..].chars() {
+        // Add everthing until the end of the number
+        for char in self[start..].chars() {
             if char.is_digit(10) {
                 curr_num.push(char);
             } else {
